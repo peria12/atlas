@@ -1,0 +1,35 @@
+﻿@model List<GlobalNetApps.AtlasFlightSchedule.Models.LOFViewModel>
+<body style="background-color:white" align=center>
+    <br />
+    @if (Model != null && Model.Count() > 0)
+    {
+        <center> <p style="font-size:18px;color:darkblue;font-weight:bold;">Flight Schedule for @Model.FirstOrDefault().AircraftRegistration As of: @String.Format("{0:r}", DateTime.Now.ToUniversalTime()) </p></center>
+        <table align=center border="1" width="70%" style="border-style: outset; border-width: 0px" bgcolor=white height="85%">
+            <tr bgcolor=white>
+                <td width=10% nowrap valign=top align=center><b>Flight No</b></td>
+                <td width=10% nowrap valign=top align=center><b>Depart Dt & Tm</b></td>
+                <td width=10% nowrap valign=top align=center><b>Depart Sta</b></td>
+                <td width=10% nowrap valign=top align=center><b>Arrival Sta</b></td>
+                <td width=10% nowrap valign=top align=center><b>Arrival Dt & Tm</b></td>
+                <td width=10% nowrap valign=top align=center><b>Grnd Tm</b></td>
+                <td width=10% nowrap valign=top align=center><b>Status</b></td>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.FltNo)</td>
+                    <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.DeptTime)</td>
+                    <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.DeptStation)</td>
+                    <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.ArrivalStation)</td>
+                    <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.ArrivalTime)</td>
+                    <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.GroundTime)</td>
+                    <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.FltStatus)</td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p style="font-size:24px;color:red;font-weight:bolder;">No Data found</p>
+    }
+</body>

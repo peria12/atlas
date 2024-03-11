@@ -1,0 +1,462 @@
+﻿@model GlobalNetApps.AtlasFlightSchedule.Models.FlightHotelViewModel
+@using GridMvc.Html
+@{
+    ViewBag.Title = "GetFlight";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (@Model.FlightViewModel.Count() > 0)
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <p class="subtitle-font">Atlas Air Flight Details for @Model.FlightViewModel.FirstOrDefault().AirlineCode @Model.FlightViewModel.FirstOrDefault().FltNo on @DateTime.Now.ToShortDateString()</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            @Html.ActionLink("Return to Schedule", "Index", "Flight", null, new { @class = "all-aircraft" })
+        </div>
+    </div>
+
+    <div class="row top-buffer">
+        <div class="col-md-6 col-md-offset-3 table-responsive">
+            <table class="table table-striped table-bordered flight-details">
+                <thead class="thead-inverse tdhead-bg">
+                    <tr>
+                        <td>
+                            @Html.ActionLink("Previous Flight for #" + @Model.FlightViewModel.FirstOrDefault().AircraftTailNo, "GetFlight", new { SeqNo = @Model.FlightViewModel.FirstOrDefault().PriorFltSeqNo, isHotel = false })
+                        </td>
+                        <td class="text-right">
+                            @Html.ActionLink("Next Flight for #" + @Model.FlightViewModel.FirstOrDefault().AircraftTailNo, "GetFlight", new { SeqNo = @Model.FlightViewModel.FirstOrDefault().NextFltSeqNo, isHotel = false })
+                        </td>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>
+                        <span>Departure Station</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().DepartureStation</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Arrival Station</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().ArrivalStation</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Tail Number</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().AircraftTailNo</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Flight Status</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltStatus</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Scheduled Departure</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().OrigDepartureDate - @Model.FlightViewModel.FirstOrDefault().OrigDepartureTime</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Scheduled Arrival</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().OrigArrivalDate - @Model.FlightViewModel.FirstOrDefault().OrigArrivalTime</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Est. Time of Dept.</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltETDDate - @Model.FlightViewModel.FirstOrDefault().FltETDTime</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Est. Time of Arr.</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltETADate - @Model.FlightViewModel.FirstOrDefault().FltETATime</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Flight Out Time</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltOutDate - @Model.FlightViewModel.FirstOrDefault().FltOutTime</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Flight Off Time</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltOffDt - @Model.FlightViewModel.FirstOrDefault().FltOffTm</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Flight On Time</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltOnDt - @Model.FlightViewModel.FirstOrDefault().FltOnTm</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Flight In Time</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltInDate - @Model.FlightViewModel.FirstOrDefault().FltInTime</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Customer Name</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().CustomerName</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Customer Code</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltCustomer</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Customer Remarks</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().CustRemarks</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Flight Type</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().FltType</span>
+                    </td>
+                </tr>
+                @if (!string.IsNullOrEmpty(@Model.FlightViewModel.FirstOrDefault().FltCustomer) && @Model.FlightViewModel.FirstOrDefault().FltCustomer.Trim() == "MC")
+                {
+                    <tr>
+                        <td>
+                            <span>Mission ID</span>
+                        </td>
+                        <td>
+                            <span>@Model.FlightViewModel.FirstOrDefault().Mission</span>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>
+                        <span>Planned Payload</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().PlanPyld)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Actual Payload</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().ActualPayLoad)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Max Avail Payload</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().MaxAvailPyld)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Taxi Fuel Plan</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().TaxiFuelPlan)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Fuel at Blockout</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().FuelBlockOut)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Planned Burn</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().PlanBurn)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Fuel Plan Remarks</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().PlanFuelRem)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Fuel at Landing</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().FuelAtLanding)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Fuel at Blockin</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().FuelAtBlockIn)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Fuel Uplift US Gallons</span>
+                    </td>
+                    <td>
+                        <span>@String.Format("{0:#,###0}", Model.FlightViewModel.FirstOrDefault().FuelUpLiftUSGal)</span>
+                    </td>
+                </tr>
+                @if (@ViewBag.isDisplayNames)
+                {
+                    <tr>
+                        <td>
+                            <span>Captain</span>
+                        </td>
+                        <td>
+                            <span>@Model.FlightViewModel.FirstOrDefault().CMNameCA</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>First Officer</span>
+                        </td>
+                        <td>
+                            <span>@Model.FlightViewModel.FirstOrDefault().CMNameFO</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>Flight Engineer</span>
+                        </td>
+                        <td>
+                            <span>@Model.FlightViewModel.FirstOrDefault().CMNameFE</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>Purser</span>
+                        </td>
+                        <td>
+                            <span>@Model.FlightViewModel.FirstOrDefault().CMNamePU</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>Assistant Purser</span>
+                        </td>
+                        <td>
+                            <span>@Model.FlightViewModel.FirstOrDefault().CMNameAP</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>Flight Attendants</span>
+                        </td>
+                        <td>
+                            <span>@Model.FlightViewModel.FirstOrDefault().CMNameFA</span>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>
+                        <span>Jump Seat Count</span>
+                    </td>
+                    <td>
+                        <span>@Model.FlightViewModel.FirstOrDefault().JSCount</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Jump Seaters</span>
+                    </td>
+                    <td>
+                        @{
+                            var jSeat1 = Model.FlightViewModel.FirstOrDefault().Jseat1;
+                            if (jSeat1 != null)
+                            {
+                                var jSeat1Array1 = jSeat1.Split(new string[] { ",," }, StringSplitOptions.None);
+                                jSeat1 = jSeat1Array1.Length > 0 ? jSeat1Array1[0] : string.Empty;
+                            }
+
+                            var jSeat2 = Model.FlightViewModel.FirstOrDefault().Jseat2;
+                            if (jSeat2 != null)
+                            {
+                                var jSeat1Array2 = jSeat2.Split(new string[] { ",," }, StringSplitOptions.None);
+                                jSeat2 = jSeat1Array2.Length > 0 ? jSeat1Array2[0] : string.Empty;
+                            }
+
+                            var jSeat3 = Model.FlightViewModel.FirstOrDefault().Jseat3;
+                            if (jSeat3 != null)
+                            {
+                                var jSeat1Array3 = jSeat3.Split(new string[] { ",," }, StringSplitOptions.None);
+                                jSeat3 = jSeat1Array3.Length > 0 ? jSeat1Array3[0] : string.Empty;
+                            }
+
+                            var jSeat4 = Model.FlightViewModel.FirstOrDefault().Jseat4;
+                            if (jSeat4 != null)
+                            {
+                                var jSeat1Array4 = jSeat4.Split(new string[] { ",," }, StringSplitOptions.None);
+                                jSeat4 = jSeat1Array4.Length > 0 ? jSeat1Array4[0] : string.Empty;
+                            }
+
+                            var jSeat5 = Model.FlightViewModel.FirstOrDefault().Jseat5;
+                            if (jSeat5 != null)
+                            {
+                                var jSeat1Array5 = jSeat5.Split(new string[] { ",," }, StringSplitOptions.None);
+                                jSeat5 = jSeat1Array5.Length > 0 ? jSeat1Array5[0] : string.Empty;
+                            }
+
+                            var jSeat6 = Model.FlightViewModel.FirstOrDefault().Jseat6;
+                            if (jSeat6 != null)
+                            {
+                                var jSeat1Array6 = jSeat6.Split(new string[] { ",," }, StringSplitOptions.None);
+                                jSeat6 = jSeat1Array6.Length > 0 ? jSeat1Array6[0] : string.Empty;
+                            }
+                        }
+                        <p>@jSeat1</p>
+                        <p>@jSeat2</p>
+                        <p>@jSeat3</p>
+                        <p>@jSeat4</p>
+                        <p>@jSeat5</p>
+                        <p>@jSeat6</p>
+                    </td>
+                </tr>
+                @foreach (var fModel in Model.FlightViewModel)
+                {
+                    if (fModel.DelaySeqno < 9)
+                    {
+                        <tr>
+                            <td>
+                                <span>Departure Delay</span>
+                            </td>
+                            <td>
+                                @if (string.IsNullOrEmpty(fModel.FltDelayCode))
+                                {
+                                    <span>@fModel.ARRDelayCode</span>
+                                }
+                                else
+                                { <span>@fModel.FltDelayCode</span>}
+
+                                @if (string.IsNullOrEmpty(fModel.FltDelayAmounts))
+                                {
+                                    <span>- @fModel.ARRDelayAmt</span>
+                                }
+                                else
+                                { <span>- @fModel.FltDelayAmounts</span>}
+                                <span>- @fModel.DelayType</span>
+                                <span>- @fModel.Description</span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+
+    <div class="row top-space">
+        <div class="col-md-12 text-center">
+            <span>Hotel Information</span>
+            @if (Model.HotelViewModel != null)
+            {
+                @Html.ActionLink("Click to Hide", "GetFlight", new { SeqNo = Request.QueryString["SeqNo"], isHotel = false })
+                <span>click the Hotel Location link to view other crews at airport</span>
+            }
+            else
+            { @Html.ActionLink("Click to View", "GetFlight", new { SeqNo = Request.QueryString["SeqNo"], isHotel = true })}
+        </div>
+    </div>
+
+    <div class="row top-space">
+        @*<div class="col-md-12 text-center">@Html.ActionLink("View the GenDec Form", "GetGenDecForm", new { SeqNo = Request.QueryString["SeqNo"] })</div>*@
+    </div>
+
+    <div class="row top-buffer">
+        @if (Model.HotelViewModel != null)
+        {
+            <div class="col-md-12 hotel-list-container">
+                @if (Model.HotelViewModel.Count() > 0)
+                {
+
+                    @Html.Grid(Model.HotelViewModel).Columns(columns =>
+       {
+                    columns.Add(c => c.Supplier).Titled("HOTEL NO");
+                    columns.Add(c => c.CrewID).Titled("Emp ID");
+                    columns.Add(c => c.CrewName).Titled("Crew Member");
+                    columns.Add().Titled("Hotel Location")
+                        .Encoded(false)
+                        .Sanitized(false)
+                        .RenderValueAs(d =>
+@<b>
+    @Html.ActionLink(d.SupplierStn, "GetHotels", new { Station = d.SupplierStn })
+</b>);
+columns.Add(c => c.Name).Titled("Hotel");
+columns.Add(c => c.Night).Titled("# of Nights");
+columns.Add(c => c.LocalCheckInDtTm).Titled("Check-in Day/Time").Format("{0:MM/dd/yyyy}");
+columns.Add(c => c.LocalCheckOutDtTm).Titled("Check-out Day/Time").Format("{0:MM/dd/yyyy}");
+columns.Add(c => c.Status).Titled("Reservation Status");
+columns.Add(c => c.ReservationNumber).Titled("Reservation Number");
+columns.Add(c => c.AddressLineOne).Titled("Address");
+columns.Add(c => c.AddressLineTwo).Titled("City State");
+columns.Add(c => c.Phone).Titled("Phone");
+columns.Add(c => c.Fax).Titled("Fax");
+columns.Add(c => c.Mail).Titled("Website");
+columns.Add(c => c.FltSeqNo).Titled("FltSeqNo");
+})
+                }
+                else
+                { <p class="subtitle-font text-center">No Records</p>}
+            </div>
+        }
+    </div>
+
+}
+else
+{
+    <div class="row">
+        <p class="subtitle-font">Something went wrong !</p>
+    </div>
+}

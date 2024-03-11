@@ -1,0 +1,44 @@
+﻿@model IEnumerable<GlobalNetApps.AtlasFlightSchedule.Models.HotelViewModel>
+@using GridMvc.Html
+@{
+    ViewBag.Title = "GetHotels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (@Model.Count() > 0)
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-12">
+            <p class="subtitle-font">All Crews in Hotels in @Model.FirstOrDefault().SupplierStn going back 3 days and forward 3 days</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 hotel-list-container">
+            @Html.Grid(Model).Columns(columns =>
+       {
+           columns.Add(c => c.Supplier).Titled("HOTELNO");
+           columns.Add(c => c.CrewID).Titled("EmpID");
+           columns.Add(c => c.CrewName).Titled("CrewMember");
+           columns.Add(c => c.SupplierStn).Titled("Hotel Location");
+           columns.Add(c => c.Name).Titled("Hotel");
+           columns.Add(c => c.Night).Titled("# of Nights");
+           columns.Add(c => c.LocalCheckInDtTm).Titled("Check-in Day/Time").Format("{0:MM/dd/yyyy}");
+           columns.Add(c => c.LocalCheckOutDtTm).Titled("Check-out Day/Time").Format("{0:MM/dd/yyyy}");
+           columns.Add(c => c.Status).Titled("Reservation Status");
+           columns.Add(c => c.ReservationNumber).Titled("Reservation Number");
+           columns.Add(c => c.AddressLineOne).Titled("Address");
+           columns.Add(c => c.AddressLineTwo).Titled("City State");
+           columns.Add(c => c.Phone).Titled("Phone");
+           columns.Add(c => c.Fax).Titled("Fax");
+           columns.Add(c => c.Mail).Titled("Website");
+           columns.Add(c => c.FltSeqNo).Titled("FltSeqNo");
+       });
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <p class="subtitle-font">Something went wrong !</p>
+    </div>
+}

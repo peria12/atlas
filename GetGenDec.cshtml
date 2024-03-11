@@ -1,0 +1,100 @@
+﻿@model GlobalNetApps.AtlasFlightSchedule.Models.FlightGenDecViewModel
+
+@{
+    ViewBag.Title = "GetGenDec";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (@Model.FlightViewModel != null)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <P>
+                <b>
+                    GENERAL  DECLARATION
+                    <br>
+                    (Outward/Inward)
+                    <br>
+                    AGRICULTURE, CUSTOMS, IMMIGRATION, AND PUBLIC HEALTH
+                </b><br>
+                19 CFR 122.43,122.52,122.54,122.73,122.144
+            </P>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>Owner or Operator</label>
+            <input size=100 value="@Model.FlightViewModel.Al" name=owner>
+            <label>Marks of Nationality and Registration</label>
+            <input name=reg value="@Model.FlightViewModel.AircraftRegistration">
+            <label>Flight No.</label>
+            <input name=flt_no value="@Model.FlightViewModel.FltNo">
+            <label>Date</label>
+            <input name=fltdate value="@Model.FlightViewModel.FltInDate">
+            <label>Arrival at</label>
+            <input name=arrival value="@Model.FlightViewModel.ArrivalStation">
+            <label>Departure from</label>
+            <input name=departure value="@Model.FlightViewModel.DepartureStation">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>FLIGHT ROUTING <br>("Place" Column always to list origin, every en-route stop and destination)</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>PLACE</label>
+            <label>CREW</label>
+            <input type=text name=origin1 value="@if (Model.FlightListViewModel.Count() > 0) {
+            @Model.FlightListViewModel.FirstOrDefault().DepartureStation
+            } else {@Model.FlightViewModel.DepartureStation } " size=3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label>NUMBER OF PASSENGERS ON THIS STAGE 1)</label>
+            <label>Departure Place:</label>
+            <label>Embarking</label>
+            <input type=text name=embark value=0>
+            <label>Through on same flight</label>
+            <input type=text name=through value=0>
+            <label>Arrival Place:</label>
+            <label>Disembarking</label>
+            <input type=text name=disembark value=0>
+            <label>Through on same flight</label>
+            <input type=text name=through2 value=0>
+            <label>NUMBER OF SED's AND AWB's</label>
+            <label>SED's </label>
+            <input name=SED>
+            <label>AWB's</label>
+            <input name=AWB>
+            <label>For official use only</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <lable>Declaration of Health</lable>
+            <p>Persons on board known to be suffering from illness other than airsickness or the effects of accidents, as well as those cases of illness disembarked during the flight:</p>
+            <input name=person1 size=75>
+            <input name=person2 size=75>
+            <input name=person3 size=75>
+            <label>Any other condition on board which may lead to the spread of disease:</label>
+            <input name=condition1 size=75>
+            <input name=condition2 size=75>
+            <p>Details of each disinsecting or sanitary treatment (place, date, time, method) during the flight. If no disinsecting has been carried out during the flight give details of most recent disinsecting:</p>
+            <input name=dis1 size=75>
+            <input name=dis2 size=75>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="submit" id="idSaveGenDec" class="btn btn-primary">Save & Print</button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <p class="subtitle-font">Something went wrong !</p>
+    </div>
+}

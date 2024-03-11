@@ -1,0 +1,325 @@
+﻿@model GlobalNetApps.AtlasFlightSchedule.Models.ViewModel
+@using GridMvc.Html
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="row">
+        <div class="col-md-12 text-center top-buffer">
+            <p class="title-font">Atlas Flight Schedule</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4 col-sm-12">
+            <div class="col-md-12  text-center">
+                @Html.ActionLink("View Flight Schedule by Aircraft Number", "Index", "Aircraft", null, new { @class = "all-aircraft" })
+            </div>
+            <div class="col-md-12 text-center top-buffer">
+                <span>As of: @String.Format("{0:r}", DateTime.Now.ToUniversalTime())</span>
+                <span>
+                    @if (!string.IsNullOrEmpty(@Model.LookupModel.Station))
+                    {
+                        <label>- @Model.LookupModel.Station.ToUpper()</label>
+                        <label>
+                            @if (@Model.LookupModel.IsInbound)
+                            {<label>- InBound</label> }
+                            else
+                            {<label>- OutBound</label>}
+                        </label>
+                    }
+                </span>
+            </div>
+            <div class="col-md-12 text-center top-space">
+                <a class="all-aircraft" href="@System.Configuration.ConfigurationManager.AppSettings["DashboardUrl"]">Return to Menu</a>
+            </div>
+            <div class="col-md-11 col-md-offset-1 col-sm-9 col-sm-offset-3 col-xs-9 col-xs-offset-3 input-append date top-space">
+                <div class="col-md-5 col-sm-4 div-rt-padding">
+                    <label class="from-label">Schedule From :</label>
+                </div>
+                <div class="col-md-7 col-sm-6 div-padding">
+                    @Html.TextBoxFor(@Model => @Model.LookupModel.StartDate, "{0:MM/dd/yyyy}", new { @class = "form-control from-date", @id = "FromDate" })
+                    <span class="add-on glyphicon glyphicon-calendar from-date-cal"></span>
+                    <br />
+                    <p class="text-error">@Html.ValidationMessageFor(m => m.LookupModel.StartDate)</p>
+                </div>
+
+            </div>
+            <div class="col-md-11 col-md-offset-1 col-sm-9 col-sm-offset-3 col-xs-9 col-xs-offset-3 input-append date top-space">
+                <div class="col-md-5 col-sm-4 div-rt-padding">
+                    <label class="from-label">Schedule To :</label>
+                </div>
+                <div class="col-md-7 col-sm-6 div-padding">
+                    @*  @Html.TextBoxFor(@Model => @Model.LookupModel.EndDate, new { @class = "form-control to-date col-md-6", @id = "ToDate" })*@
+                    @Html.TextBoxFor(@Model => @Model.LookupModel.EndDate, "{0:MM/dd/yyyy}", new
+                    {
+                        @class = "form-control to-date ",
+                        @id = "ToDate",
+                        @data_rule_daterangevalidation = "true",
+                        @data_rule_daterangelimitvalidation = "true"
+                    })
+                    <span class="add-on glyphicon glyphicon-calendar to-date-cal"></span>
+                    <br />
+                    <p class="text-error">@Html.ValidationMessageFor(m => m.LookupModel.EndDate)</p>
+                </div>
+            </div>
+            <div class="col-md-11 col-md-offset-1 col-sm-9 col-sm-offset-3 col-xs-9 col-xs-offset-3 form-group top-space">
+                <div class="col-md-5 col-sm-4 div-rt-padding">
+                    <label class="from-label">IATA Station :</label>
+                </div>
+                <div class="col-md-7 col-sm-6 div-padding">
+                    @Html.TextBoxFor(@Model => @Model.LookupModel.Station, new { @class = "form-control iata-sta col-md-6", @id = "idStation", @value = @Model.LookupModel.Station })
+                </div>
+                <div class="col-md-12 no-padding-left">
+                    <p class="text-error">@Html.ValidationMessageFor(m => m.LookupModel.Station)</p>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12 text-center form-group">
+                <div class="radio">
+                    <label class="margin-left-20">@Html.RadioButtonFor(@Model => @Model.LookupModel.IsInbound, true, new { @checked = "checked" }) Inbound</label>
+                    <label class="margin-left-20">@Html.RadioButtonFor(@Model => @Model.LookupModel.IsInbound, false, new { }) Outbound</label>
+                </div>
+</div>
+                @*<div class="col-md-12 col-sm-12 col-xs-12 text-center form-group">
+                @if (Model.LookupModel.IsInbound)
+                {
+                    <div class="radio">
+                        <label>@Html.RadioButtonFor(@Model => @Model.LookupModel.IsInbound, "InBound", new { @checked = "checked" }) Inbound</label>
+                        <label>@Html.RadioButtonFor(@Model => @Model.LookupModel.IsInbound, "OutBound") Outbound</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="radio">
+                        <label>@Html.RadioButtonFor(@Model => @Model.LookupModel.IsInbound, "InBound") Inbound</label>
+                        <label>@Html.RadioButtonFor(@Model => @Model.LookupModel.IsInbound, "OutBound", new { @checked = "checked" }) Outbound</label>
+                    </div>
+                }
+
+            </div>*@
+
+
+                @Html.Hidden("pageReload", (bool)ViewBag.PageAction)
+            </div>
+        </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="submit" id="idBtnGenerate" class="btn btn-primary">Get Schedule</button>
+        </div>
+    </div>
+
+    <div class="row top-buffer">
+        @if (Model.FlightViewModel != null)
+        {
+            @*<div class="col-md-12">
+                                @if (Model.FlightViewModel.Count() > 0)
+                                {
+
+                                    @Html.Grid(Model.FlightViewModel).Columns(columns =>
+                               {
+                               columns.Add(c => c.FltCustomer).Titled("Cust.");
+                               columns.Add(c => c.AirlineCode).Titled("AL Code");
+                               columns.Add(c => c.FltNo).Titled("FLT #");
+                               columns.Add(c => c.AircraftTailNo).Titled("Tail #");
+                               columns.Add(c => c.DepartureStation).Titled("Dept. Sta.");
+                               columns.Add(c => c.ArrivalStation).Titled("Arr. Sta.");
+                               columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.OrigDepartureDate + (string.IsNullOrEmpty(d.OrigDepartureTime) ? string.Empty : (" - " + d.OrigDepartureTime))).Titled("Orig. Dept. Time");
+                               columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.FltETDDate + (string.IsNullOrEmpty(d.FltETDTime) ? string.Empty : (" - " + d.FltETDTime))).Titled("ETD Time");
+                               columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.FltOutDate + (string.IsNullOrEmpty(d.FltOutTime) ? string.Empty : (" - " + d.FltOutTime))).Titled("Flt Out Time");
+                               columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => @<b> @Html.ActionLink("Details", "GetFlight", new { SeqNo = d.FltSeqNo, isHotel = false }) </b>);
+                               })
+                }
+                else
+                {  <div class="col-md-12"><p class="subtitle-font text-center">No Flights Found !</p></div>}
+                            </div>*@
+            <div class="col-md-12">
+                @if (Model.FlightViewModel.Count() > 0)
+                {
+                    if (Model.LookupModel.IsInbound)
+                    {
+                        @Html.Grid(Model.FlightViewModel).Columns(columns =>
+                   {
+                   columns.Add(c => c.FltCustomer).Titled("Cust.");
+                   columns.Add(c => c.AirlineCode).Titled("AL Code");
+                   columns.Add(c => c.FltNo).Titled("FLT #");
+                   columns.Add(c => c.AircraftTailNo).Titled("Tail #");
+                   columns.Add(c => c.DepartureStation).Titled("Dep. Sta.");
+                   columns.Add(c => c.ArrivalStation).Titled("Arr. Sta.");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.OrigArrivalDate + (string.IsNullOrEmpty(d.OrigArrivalDate) ? " - " : (string.IsNullOrEmpty(d.OrigArrivalTime) ? string.Empty : (" - " + d.OrigArrivalTime)))).Titled("Orig. Arr. Time");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.FltETADate + (string.IsNullOrEmpty(d.FltETADate) ? " - " : (string.IsNullOrEmpty(d.FltETATime) ? string.Empty : (" - " + d.FltETATime)))).Titled("ETA Time");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.FltInDate + (string.IsNullOrEmpty(d.FltInDate) ? " - " : (string.IsNullOrEmpty(d.FltInTime) ? string.Empty : (" - " + d.FltInTime)))).Titled("Flt In Time");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => @<b> @Html.ActionLink("Details", "GetFlight", new { SeqNo = d.FltSeqNo, isHotel = false }) </b>);
+                                    }).WithPaging(50)
+                    }
+                    else
+                    {
+                        @Html.Grid(Model.FlightViewModel).Columns(columns =>
+                   {
+                   columns.Add(c => c.FltCustomer).Titled("Cust.");
+                   columns.Add(c => c.AirlineCode).Titled("AL Code");
+                   columns.Add(c => c.FltNo).Titled("FLT #");
+                   columns.Add(c => c.AircraftTailNo).Titled("Tail #");
+                   columns.Add(c => c.DepartureStation).Titled("Dep. Sta.");
+                   columns.Add(c => c.ArrivalStation).Titled("Arr. Sta.");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.OrigDepartureDate + (string.IsNullOrEmpty(d.OrigDepartureDate) ? " - " : (" - " + d.OrigDepartureTime))).Titled("Orig. Dept. Time");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.FltETDDate + (string.IsNullOrEmpty(d.FltETDDate) ? " - " : (string.IsNullOrEmpty(d.FltETDTime) ? string.Empty : (" - " + d.FltETDTime)))).Titled("ETD Time");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => d.FltOutDate + (string.IsNullOrEmpty(d.FltOutDate) ? " - " : (string.IsNullOrEmpty(d.FltOutTime) ? string.Empty : (" - " + d.FltOutTime)))).Titled("Flt Out Time");
+                   columns.Add().Encoded(false).Sanitized(false).RenderValueAs(d => @<b> @Html.ActionLink("Details", "GetFlight", new { SeqNo = d.FltSeqNo, isHotel = false }) </b>);
+                                    }).WithPaging(50)
+                                }
+
+                            }
+
+                            else
+                            { <div class="col-md-12"><p class="subtitle-font text-center">No Flights Found !</p></div>}
+            </div>
+        }
+    </div>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var hitFlag = false;
+            $.validator.addMethod("daterangevalidation", function (value, element) {
+                var startDate = new Date($("#FromDate").val());
+                var endDate = new Date($("#ToDate").val());
+                if (startDate != null && startDate != 'undefined') {
+                    if (endDate < startDate) {
+                        return false;
+                    }
+                }
+                return true;
+            }, "To Date is less than From Date");
+
+            $.validator.addMethod("daterangelimitvalidation", function (value, element) {
+                var startDate = new Date($("#FromDate").val());
+                var endDate = new Date($("#ToDate").val());
+                var millisecondsPerDay = 1000 * 60 * 60 * 24;
+                var millisBetween = endDate.getTime() - startDate.getTime();
+                var days = millisBetween / millisecondsPerDay;
+                if (days < 0 || days > 90) {
+                    return false;
+                }
+                return true;
+            }, "Selected date range is greater than 90 days.");
+
+            var newdate = new Date();
+            newdate.setDate(newdate.getDate() + 20);
+
+            //var fDate = [new Date().getMonth() + 1, new Date().getDate(), new Date().getFullYear()].join("/");
+            //var eDate = [newdate.getMonth() + 1, newdate.getDate(), newdate.getFullYear()].join("/");
+            var fDate = [("0" + (new Date().getMonth() + 1)).slice(-2), ("0" + new Date().getDate()).slice(-2), new Date().getFullYear()].join("/");
+            var eDate = [("0" + (newdate.getMonth() + 1)).slice(-2), ("0" + newdate.getDate()).slice(-2), newdate.getFullYear()].join("/");
+
+            var startDate = new Date(fDate);
+            var endDate = new Date(eDate);
+            if ($('#pageReload').val() != "True") {
+                
+                $("#FromDate").attr("value", fDate);
+                $("#ToDate").attr("value", eDate);
+            }
+
+            $('#FromDate').datepicker({ format: 'mm/dd/yyyy' })
+                .on('changeDate', function (ev) {
+                    $(this).datepicker('hide');
+                    $('#FromDate').valid();
+                    if (hitFlag)
+                        $('#ToDate').valid();
+                });
+            $("#ToDate").datepicker({ format: 'mm/dd/yyyy' })
+                .on("changeDate", function (ev) {
+                    $(this).datepicker('hide');
+                    hitFlag = true;
+                    if (hitFlag)
+                        $('#ToDate').valid();
+                });
+        });
+        $("button,select,input").click(function () {
+            $("#data-error").remove();
+        });
+        $('.from-date-cal').click(function () {
+            $('#FromDate').datepicker('show');
+        });
+        $('.to-date-cal').click(function () {
+            $('#ToDate').datepicker('show');
+        });
+
+    </script>
+
+    @*<script type="text/javascript">
+
+            $(document).ready(function () {
+
+                var newdate = new Date();
+                newdate.setDate(newdate.getDate() + 20);
+
+                var fDate = [new Date().getMonth() + 1, new Date().getDate(), new Date().getFullYear()].join("/");
+                var eDate = [newdate.getMonth() + 1, newdate.getDate(), newdate.getFullYear()].join("/");
+
+                var startDate = new Date(fDate);
+                var endDate = new Date(eDate);
+                $("#FromDate").attr("value", fDate);
+                $("#ToDate").attr("value", eDate);
+                alert($('#pageReload').val());
+
+                if ($('#pageReload').val() != "True") {
+                    alert($('#pageReload').val());
+                    $("#FromDate").attr("value", fDate);
+                    $("#ToDate").attr("value", eDate);
+                    alert(fDate);
+                }
+
+
+                $('#FromDate').datepicker({ format: 'mm/dd/yyyy' })
+                    .on('changeDate', function (ev) {
+                        startDate = new Date(ev.date.getFullYear(), ev.date.getMonth(), ev.date.getDate(), 0, 0, 0);
+                        if (endDate != null && endDate != 'undefined') {
+                            if (endDate < startDate) {
+                                $("#idBtnGenerate").attr("Disabled", "disabled");
+                                $("#idDateErr").removeClass("hide").addClass("show");
+                            } else {
+                                $("#idBtnGenerate").removeAttr("Disabled");
+                                $("#idDateErr").removeClass("show").addClass("hide");
+                            }
+                        }
+                        $(this).datepicker('hide');
+                    });
+                $("#ToDate").datepicker({ format: 'mm/dd/yyyy' })
+                        .on("changeDate", function (ev) {
+                            endDate = new Date(ev.date.getFullYear(), ev.date.getMonth(), ev.date.getDate(), 0, 0, 0);
+                            if (startDate != null && startDate != 'undefined') {
+                                if (endDate < startDate) {
+                                    $("#idBtnGenerate").attr("Disabled", "disabled");
+                                    $("#idDateErr").removeClass("hide").addClass("show");
+                                } else {
+                                    $("#idBtnGenerate").removeAttr("Disabled");
+                                    $("#idDateErr").removeClass("show").addClass("hide");
+                                }
+                            }
+                            $(this).datepicker('hide');
+                        });
+            });
+            $("button,select,input").click(function () {
+                $("#data-error").remove();
+            });
+            $('.from-date-cal').click(function () {
+                $('#FromDate').datepicker('show');
+            });
+            $('.to-date-cal').click(function () {
+                $('#ToDate').datepicker('show');
+            });
+
+        </script>*@
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+

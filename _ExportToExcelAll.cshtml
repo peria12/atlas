@@ -1,0 +1,46 @@
+﻿@model List<GlobalNetApps.AtlasFlightSchedule.Models.LOFViewModel>
+<body style="background-color:white" align=center>
+    <br />
+    @if (Model != null)
+    {
+        <center> <p style="font-size:18px;color:darkblue;font-weight:bold;">Atlas Air Aircraft Report As of: @String.Format("{0:r}", DateTime.Now.ToUniversalTime()) </p></center>
+        var listRegNo = Model.GroupBy(m => m.AircraftRegistration).Select(s => s.First());
+        foreach (var listItem in listRegNo)
+        {
+            var filterData = Model.Where(m => m.AircraftRegistration == listItem.AircraftRegistration);
+            if (filterData != null && filterData.Count() > 0)
+            {
+                <span style="font-size:16px;font-weight:bold;"> @filterData.FirstOrDefault().AircraftRegistration </span>
+
+                <table align=center border="1" width="70%" style="border-style: outset; border-width: 0px" bgcolor=white height="85%">
+                    <tr bgcolor=white>
+                        <td width=10% nowrap valign=top align=center><b>Flight No</b></td>
+                        <td width=10% nowrap valign=top align=center><b>Depart Dt & Tm</b></td>
+                        <td width=10% nowrap valign=top align=center><b>Depart Sta</b></td>
+                        <td width=10% nowrap valign=top align=center><b>Arrival Sta</b></td>
+                        <td width=10% nowrap valign=top align=center><b>Arrival Dt & Tm</b></td>
+                        <td width=10% nowrap valign=top align=center><b>Grnd Tm</b></td>
+                        <td width=10% nowrap valign=top align=center><b>Status</b></td>
+                    </tr>
+                    @foreach (var item in filterData)
+                    {
+                        <tr>
+                            <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.FltNo)</td>
+                            <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.DeptTime)</td>
+                            <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.DeptStation)</td>
+                            <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.ArrivalStation)</td>
+                            <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.ArrivalTime)</td>
+                            <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.GroundTime)</td>
+                            <td width=10% nowrap valign=top align=center>@Html.DisplayFor(m => item.FltStatus)</td>
+                        </tr>
+                    }
+                </table>
+                <br />
+            }
+        }
+    }
+    else
+    {
+        <p style="font-size:24px;color:red;font-weight:bolder;">No Data found</p>
+    }
+</body>
